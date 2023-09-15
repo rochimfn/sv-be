@@ -23,6 +23,7 @@ func main() {
 	db.AutoMigrate(&schema.Post{})
 
 	e := gin.Default()
+	e = app.InitMiddleware(e)
 	handler := app.NewArticleHandler(db)
 	router := app.InitArticleRoute(e, handler)
 
