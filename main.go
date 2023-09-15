@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rochimfn/sv-be/app"
@@ -21,22 +22,15 @@ func main() {
 	}
 	db.AutoMigrate(&schema.Post{})
 
+	e := gin.Default()
 	handler := app.NewArticleHandler(db)
-	r := gin.Default()
-	r.POST("/article", handler.NewPost)
-	r.GET("/article/:id", handler.DetailPost)
-	r.GET("/article/:id/:offset", handler.ListPost)
-	// rute /article/:limit/:offset tidak bisa digunakan di gin
-	// karena akan konflik dengan /article/:id
-	// https://github.com/gin-gonic/gin/issues/205
-	r.PUT("/article/:id", handler.UpdatePost)
-	r.DELETE("/article/:id", handler.DeletePost)
+	router := app.InitArticleRoute(e, handler)
 
-	r.GET("/ping", func(c *gin.Context) {
+	router.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"status":  "success",
 			"message": "pong"})
 	})
 	log.Println("listen and serve on 0.0.0.0:8080")
-	r.Run()
+	router.Run()
 }
