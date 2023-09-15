@@ -32,6 +32,11 @@ func main() {
 	r.PUT("/article/:id", handler.UpdatePost)
 	r.DELETE("/article/:id", handler.DeletePost)
 
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"status":  "success",
+			"message": "pong"})
+	})
 	log.Println("listen and serve on 0.0.0.0:8080")
 	r.Run()
 }
